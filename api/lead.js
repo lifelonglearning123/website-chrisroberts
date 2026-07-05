@@ -39,8 +39,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
 
-  const token = process.env.GHL_TOKEN;
-  const locationId = process.env.GHL_LOCATION_ID;
+  // Private Integration Tokens always start with "pit-"; location ids never do.
+  // If the two env vars were entered swapped, use each value for what it is.
+  let token = (process.env.GHL_TOKEN || "").trim();
+  let locationId = (process.env.GHL_LOCATION_ID || "").trim();
+  if (locationId.startsWith("pit-") && !token.startsWith("pit-")) {
+    [token, locationId] = [locationId, token];
+  }
   if (!token || !locationId) {
     console.error("[lead] Missing GHL_TOKEN or GHL_LOCATION_ID env vars");
     return res.status(500).json({ ok: false, error: "Server not configured" });
