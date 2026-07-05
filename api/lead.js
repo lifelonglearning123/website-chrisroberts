@@ -90,7 +90,6 @@ export default async function handler(req, res) {
       email,
       companyName: String(data.company || "").trim() || undefined,
       source: String(data.source || "cr-assoc.net contact form"),
-      tags,
     };
     if (phone) upsertBody.phone = phone;
 
@@ -110,7 +109,19 @@ export default async function handler(req, res) {
     try { upsertJson = JSON.parse(upsertText); } catch {}
     const contactId = upsertJson?.contact?.id || upsertJson?.id || null;
 
-    // 2) Attach the enquiry details as a Note (GHL-native record of the message).
+    // 2) Tag the contact — remove-then-add so the "Contact Tag Added"
+    // workflow trigger fires on EVERY submission, not just the first
+    // (GHL only emits the event when a tag is newly added).
+    if (contactId) {
+      const tagsUrl = `${GHL_BASE}/contacts/${contactId}/tags`;
+      const tagsBody = JSON.stringify({ tags });
+      const rmRes = await fetch(tagsUrl, { method: "DELETE", headers: ghlHeaders(token), body: tagsBody });
+      if (!rmRes.ok) console.error("[lead] tag remove failed", rmRes.status, await rmRes.text());
+      const addRes = await fetch(tagsUrl, { method: "POST", headers: ghlHeaders(token), body: tagsBody });
+      if (!addRes.ok) console.error("[lead] tag add failed", addRes.status, await addRes.text());
+    }
+
+    // 3) Attach the enquiry details as a Note (GHL-native record of the message).
     if (contactId) {
       const noteLines = [
         `New website enquiry — ${enquiryType}`,
