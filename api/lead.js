@@ -39,15 +39,18 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
 
-  // Private Integration Tokens always start with "pit-"; location ids never do.
-  // If the two env vars were entered swapped, use each value for what it is.
-  let token = (process.env.GHL_TOKEN || "").trim();
-  let locationId = (process.env.GHL_LOCATION_ID || "").trim();
-  if (locationId.startsWith("pit-") && !token.startsWith("pit-")) {
-    [token, locationId] = [locationId, token];
-  }
-  if (!token || !locationId) {
-    console.error("[lead] Missing GHL_TOKEN or GHL_LOCATION_ID env vars");
+  // The location id is a public per-site constant (it's visible in the
+  // embedded booking calendar), so it lives here rather than in an env var.
+  // Only the token is secret. Tokens always start with "pit-"; accept it
+  // from either env var in case the two were entered swapped.
+  const locationId = "JQzF9jlKdSFDEf9hR9xN";
+  const envToken = (process.env.GHL_TOKEN || "").trim();
+  const envLocation = (process.env.GHL_LOCATION_ID || "").trim();
+  const token = envToken.startsWith("pit-") ? envToken
+    : envLocation.startsWith("pit-") ? envLocation
+    : envToken;
+  if (!token) {
+    console.error("[lead] Missing GHL_TOKEN env var");
     return res.status(500).json({ ok: false, error: "Server not configured" });
   }
 
