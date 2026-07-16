@@ -233,7 +233,7 @@
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalLabel;
         statusBox.className = "form-status err";
-        statusBox.textContent = "Sorry — something went wrong. Please email chris@cr-assoc.net or call 07760 227389.";
+        statusBox.textContent = "Sorry — something went wrong. Please email chris@cr-assoc.co.uk or call 07760 227389.";
       }
     });
   }
