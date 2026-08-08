@@ -242,7 +242,7 @@ h1,h2,h3,h4 {
 .hero__line path { fill: none; stroke: rgba(31,141,129,.22); stroke-width: 2; }
 
 .hero-grid {
-  display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center;
+  display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: start;
 }
 
 .hero__eyebrow { margin-bottom: 1.4rem; }
@@ -260,7 +260,9 @@ h1,h2,h3,h4 {
 .hero__trust .tItem svg { color: var(--teal); flex: none; }
 
 /* hero portrait card */
-.hero-figure { position: relative; justify-self: center; width: min(100%, 400px); }
+/* margin-top clears the eyebrow row (its line box + .hero__eyebrow margin-bottom)
+   so the top of the portrait lines up with the top of the h1 */
+.hero-figure { position: relative; justify-self: center; width: min(100%, 400px); margin-top: calc(.77rem * 1.66 + 1.4rem); }
 .hero-portrait {
   position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 4/4.6;
   background: linear-gradient(160deg, var(--pine), var(--pine-3));
@@ -758,7 +760,7 @@ h1,h2,h3,h4 {
   .mnav-close { position: absolute; top: 1.4rem; right: var(--gutter); width: 46px; height: 46px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper); display: grid; place-items: center; }
 
   .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
-  .hero-figure { order: -1; width: min(78%, 330px); }
+  .hero-figure { order: -1; width: min(78%, 330px); margin-top: 0; }
   .hero__trust { gap: 1rem 1.6rem; }
   .statement-grid { grid-template-columns: 1fr; gap: 1.8rem; }
   .services-grid { grid-template-columns: 1fr 1fr; }
